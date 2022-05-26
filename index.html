@@ -1,33 +1,59 @@
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Mini Mario</title>
-    <style>
-      * {
-        padding: 0;
-        margin: 0;
-      }
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Pacman</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+            }
 
-      canvas {
-        background: rgb(0, 0, 0);
-      }
-    </style>
-  </head>
+            canvas {
+                background: rgb(0, 0, 0);
+            }
+        </style>
+    </head>
 
-  <body>
-    <div
-      style="
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      "
-    >
-      <canvas id="myCanvas" width="800" height="300"></canvas>
-    </div>
+    <body>
+        <div style="height: 100vh; display: flex; align-items: center; justify-content: center">
+            <canvas id="myCanvas" width="800" height="300"></canvas>
+        </div>
 
-    <script>
+        <script>
+            const canvas = document.getElementById("myCanvas")
+            const ctx = canvas.getContext("2d")
 
-    </script>
-  </body>
+            const X = true
+            const _ = false
+            const board = [
+                [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+                [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
+            ]
+
+            function draw() {
+                for (const row of board) {
+                    for (const cell of row)
+                        if (cell) {
+                            ctx.rect(x, y, 20, 20)
+                            ctx.fillStyle("rgb: 100, 100, 255")
+                            ctx.fill()
+                        }
+                }
+            }
+            setInterval(draw, 20)
+        </script>
+    </body>
 </html>
