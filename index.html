@@ -9,7 +9,8 @@
             }
 
             canvas {
-                background: rgb(0, 0, 0);
+                background: white;
+                border: 1px solid blue;
             }
         </style>
     </head>
@@ -22,6 +23,8 @@
         <script>
             const canvas = document.getElementById("myCanvas")
             const ctx = canvas.getContext("2d")
+
+            let mouthOpen = false
 
             const X = true
             const _ = false
@@ -44,16 +47,54 @@
             ]
 
             function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                drawBoard()
+
+                drawPacman(100, 100, "right", mouthOpen, 50)
+                mouthOpen = !mouthOpen
+            }
+
+            function drawBoard() {
+                let x = 0
+                let y = 0
+
                 for (const row of board) {
-                    for (const cell of row)
+                    for (const cell of row) {
                         if (cell) {
+                            ctx.beginPath()
                             ctx.rect(x, y, 20, 20)
-                            ctx.fillStyle("rgb: 100, 100, 255")
+                            ctx.fillStyle = "darkblue"
                             ctx.fill()
+                            ctx.closePath()
                         }
+                        x += 20
+                    }
+                    y += 20
+                    x = 0
                 }
             }
-            setInterval(draw, 20)
+
+            function drawPacman(x, y, direction, mouth, size) {
+                // Body
+                ctx.beginPath()
+                ctx.fillStyle = "rgb(255,221,0)"
+                const startAngle = (mouth ? 0.25 : 0.1) * Math.PI
+                ctx.arc(x, y, size, startAngle, startAngle + Math.PI, false)
+                ctx.fill()
+                ctx.beginPath()
+                const startAngle2 = (mouth ? 0.75 : 0.9) * Math.PI
+                ctx.arc(x, y, size, startAngle2, startAngle2 + Math.PI, false)
+                ctx.fill()
+
+                // Eye
+                ctx.beginPath()
+                ctx.arc(x, y - size / 2, size / 5, 0, 2 * Math.PI, false)
+                ctx.fillStyle = "rgb(0, 0, 0)"
+                ctx.fill()
+            }
+
+            setInterval(draw, 200)
         </script>
     </body>
 </html>
