@@ -30,8 +30,8 @@
             let pacmanSize = cellSize / 2 - 2
             let pacmanDirection = "right"
             let pacmanSpeed = cellSize / 10
-            let pacmanX = 100
-            let pacmanY = 100
+            let pacmanX = 400
+            let pacmanY = 200
 
             const X = true
             const _ = false
@@ -39,14 +39,14 @@
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
                 [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, X, X, X, X, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, X, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
-                [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, X, X, X, _, _, _, X, X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, _, X, X, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, _, _, X, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
+                [X, _, X, X, X, X, _, _, X, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
@@ -59,10 +59,10 @@
                 draw()
 
                 if (isMoving) {
+                    movePacman(pacmanDirection)
                     if (collisionDetection()) {
                         isMoving = false
-                    } else {
-                        movePacman(pacmanDirection)
+                        movePacman(pacmanDirection, true)
                     }
                 }
 
@@ -135,19 +135,24 @@
                 ctx.fill()
             }
 
-            function movePacman(direction) {
+            function movePacman(direction, reverse = false) {
+                const pacmanCellMiddle = {
+                    x: Math.floor(pacmanX / cellSize) * cellSize + cellSize / 2,
+                    y: Math.floor(pacmanY / cellSize) * cellSize + cellSize / 2,
+                }
+
                 switch (direction) {
                     case "right":
-                        pacmanX += pacmanSpeed
+                        pacmanX = reverse ? pacmanCellMiddle.x : pacmanX + pacmanSpeed
                         break
                     case "left":
-                        pacmanX -= pacmanSpeed
+                        pacmanX = reverse ? pacmanCellMiddle.x : pacmanX - pacmanSpeed
                         break
                     case "up":
-                        pacmanY -= pacmanSpeed
+                        pacmanY = reverse ? pacmanCellMiddle.y : pacmanY - pacmanSpeed
                         break
                     case "down":
-                        pacmanY += pacmanSpeed
+                        pacmanY = reverse ? pacmanCellMiddle.y : pacmanY + pacmanSpeed
                         break
                 }
             }
@@ -155,15 +160,18 @@
             function collisionDetection() {
                 // testCell is at the bottom right of the 4 cells that need to be checked.
                 const testCell = {
-                    x: Math.round(pacmanX / cellSize),
-                    y: Math.round(pacmanY / cellSize),
+                    col: Math.round(pacmanX / cellSize),
+                    row: Math.round(pacmanY / cellSize),
                 }
 
+                const isCenteredX = pacmanX % cellSize === cellSize / 2
+                const isCenteredY = pacmanY % cellSize === cellSize / 2
+
                 return (
-                    board[testCell.y][testCell.x] ||
-                    board[testCell.y - 1][testCell.x] ||
-                    board[testCell.y][testCell.x - 1] ||
-                    board[testCell.y - 1][testCell.x - 1]
+                    (isCenteredX || isCenteredY ? false : board[testCell.row][testCell.col]) ||
+                    (isCenteredX ? false : board[testCell.row - 1][testCell.col]) ||
+                    (isCenteredY ? false : board[testCell.row][testCell.col - 1]) ||
+                    board[testCell.row - 1][testCell.col - 1]
                 )
             }
 
