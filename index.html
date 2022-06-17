@@ -27,6 +27,7 @@
 
             let mouthOpen = false
             let isMoving = false
+            let pacmanSize = cellSize / 2 - 2
             let pacmanDirection = "right"
             let pacmanSpeed = cellSize / 10
             let pacmanX = 100
@@ -57,7 +58,13 @@
             function tick() {
                 draw()
 
-                if (isMoving) movePacman(pacmanDirection)
+                if (isMoving) {
+                    if (collisionDetection()) {
+                        isMoving = false
+                    } else {
+                        movePacman(pacmanDirection)
+                    }
+                }
 
                 if (isMoving) {
                     mouthCounter++
@@ -75,7 +82,7 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
 
                 drawBoard()
-                drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, cellSize / 2)
+                drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, pacmanSize)
             }
 
             function drawBoard() {
@@ -124,7 +131,7 @@
                 } else {
                     ctx.arc(x - size / 2, y, size / 5, 0, 2 * Math.PI, false)
                 }
-                ctx.fillStyle = "rgb(0, 0, 0)"
+                ctx.fillStyle = "black"
                 ctx.fill()
             }
 
@@ -143,6 +150,21 @@
                         pacmanY += pacmanSpeed
                         break
                 }
+            }
+
+            function collisionDetection() {
+                // testCell is at the bottom right of the 4 cells that need to be checked.
+                const testCell = {
+                    x: Math.round(pacmanX / cellSize),
+                    y: Math.round(pacmanY / cellSize),
+                }
+
+                return (
+                    board[testCell.y][testCell.x] ||
+                    board[testCell.y - 1][testCell.x] ||
+                    board[testCell.y][testCell.x - 1] ||
+                    board[testCell.y - 1][testCell.x - 1]
+                )
             }
 
             function keyDownHandler(event) {
