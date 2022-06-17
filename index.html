@@ -51,7 +51,7 @@
 
                 drawBoard()
 
-                drawPacman(100, 100, "right", mouthOpen, 50)
+                drawPacman(100, 100, "down", mouthOpen, 50)
                 mouthOpen = !mouthOpen
             }
 
@@ -76,20 +76,32 @@
             }
 
             function drawPacman(x, y, direction, mouth, size) {
+                // Calculate the angle in radians.
+                const rotateAngle = {
+                    right: 0,
+                    left: Math.PI,
+                    up: -Math.PI / 2,
+                    down: Math.PI / 2,
+                }[direction]
+
                 // Body
                 ctx.beginPath()
                 ctx.fillStyle = "rgb(255,221,0)"
-                const startAngle = (mouth ? 0.25 : 0.1) * Math.PI
+                const startAngle = (mouth ? 0.25 : 0.1) * Math.PI + rotateAngle
                 ctx.arc(x, y, size, startAngle, startAngle + Math.PI, false)
                 ctx.fill()
                 ctx.beginPath()
-                const startAngle2 = (mouth ? 0.75 : 0.9) * Math.PI
+                const startAngle2 = (mouth ? 0.75 : 0.9) * Math.PI + rotateAngle
                 ctx.arc(x, y, size, startAngle2, startAngle2 + Math.PI, false)
                 ctx.fill()
 
                 // Eye
                 ctx.beginPath()
-                ctx.arc(x, y - size / 2, size / 5, 0, 2 * Math.PI, false)
+                if (direction === "right" || direction === "left") {
+                    ctx.arc(x, y - size / 2, size / 5, 0, 2 * Math.PI, false)
+                } else {
+                    ctx.arc(x - size / 2, y, size / 5, 0, 2 * Math.PI, false)
+                }
                 ctx.fillStyle = "rgb(0, 0, 0)"
                 ctx.fill()
             }
