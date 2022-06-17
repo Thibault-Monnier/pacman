@@ -17,14 +17,20 @@
 
     <body>
         <div style="height: 100vh; display: flex; align-items: center; justify-content: center">
-            <canvas id="myCanvas" width="800" height="300"></canvas>
+            <canvas id="myCanvas" width="1200" height="450"></canvas>
         </div>
 
         <script>
             const canvas = document.getElementById("myCanvas")
             const ctx = canvas.getContext("2d")
+            const cellSize = 30
 
             let mouthOpen = false
+            let isMoving = false
+            let pacmanDirection = "right"
+            let pacmanSpeed = cellSize / 10
+            let pacmanX = 100
+            let pacmanY = 100
 
             const X = true
             const _ = false
@@ -46,13 +52,30 @@
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
             ]
 
+            let mouthCounter = 0
+
+            function tick() {
+                draw()
+
+                if (isMoving) movePacman(pacmanDirection)
+
+                if (isMoving) {
+                    mouthCounter++
+                    if (mouthCounter === 7) {
+                        mouthOpen = !mouthOpen
+                        mouthCounter = 0
+                    }
+                } else {
+                    mouthCounter = 0
+                    mouthOpen = false
+                }
+            }
+
             function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height)
 
                 drawBoard()
-
-                drawPacman(100, 100, "down", mouthOpen, 50)
-                mouthOpen = !mouthOpen
+                drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, cellSize / 2)
             }
 
             function drawBoard() {
@@ -63,20 +86,19 @@
                     for (const cell of row) {
                         if (cell) {
                             ctx.beginPath()
-                            ctx.rect(x, y, 20, 20)
+                            ctx.rect(x, y, cellSize, cellSize)
                             ctx.fillStyle = "darkblue"
                             ctx.fill()
                             ctx.closePath()
                         }
-                        x += 20
+                        x += cellSize
                     }
-                    y += 20
+                    y += cellSize
                     x = 0
                 }
             }
 
             function drawPacman(x, y, direction, mouth, size) {
-                // Calculate the angle in radians.
                 const rotateAngle = {
                     right: 0,
                     left: Math.PI,
@@ -106,7 +128,41 @@
                 ctx.fill()
             }
 
-            setInterval(draw, 200)
+            function movePacman(direction) {
+                switch (direction) {
+                    case "right":
+                        pacmanX += pacmanSpeed
+                        break
+                    case "left":
+                        pacmanX -= pacmanSpeed
+                        break
+                    case "up":
+                        pacmanY -= pacmanSpeed
+                        break
+                    case "down":
+                        pacmanY += pacmanSpeed
+                        break
+                }
+            }
+
+            function keyDownHandler(event) {
+                if (event.code === "ArrowRight") {
+                    pacmanDirection = "right"
+                    isMoving = true
+                } else if (event.code === "ArrowLeft") {
+                    pacmanDirection = "left"
+                    isMoving = true
+                } else if (event.code === "ArrowUp") {
+                    pacmanDirection = "up"
+                    isMoving = true
+                } else if (event.code === "ArrowDown") {
+                    pacmanDirection = "down"
+                    isMoving = true
+                }
+            }
+
+            document.addEventListener("keydown", keyDownHandler, false)
+            setInterval(tick, 20)
         </script>
     </body>
 </html>
