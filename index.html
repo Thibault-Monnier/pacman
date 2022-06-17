@@ -8,9 +8,12 @@
                 margin: 0;
             }
 
+            body {
+                background-color: #2f2f2f;
+            }
+
             canvas {
-                background: white;
-                border: 1px solid blue;
+                background: black;
             }
         </style>
     </head>
@@ -23,7 +26,9 @@
         <script>
             const canvas = document.getElementById("myCanvas")
             const ctx = canvas.getContext("2d")
+            const tickInterval = 19
             const cellSize = 30
+            const mouthNbTicks = 5
 
             let mouthOpen = false
             let isMoving = false
@@ -68,7 +73,7 @@
 
                 if (isMoving) {
                     mouthCounter++
-                    if (mouthCounter === 7) {
+                    if (mouthCounter === mouthNbTicks) {
                         mouthOpen = !mouthOpen
                         mouthCounter = 0
                     }
@@ -94,7 +99,7 @@
                         if (cell) {
                             ctx.beginPath()
                             ctx.rect(x, y, cellSize, cellSize)
-                            ctx.fillStyle = "darkblue"
+                            ctx.fillStyle = "#7f96fa"
                             ctx.fill()
                             ctx.closePath()
                         }
@@ -192,7 +197,7 @@
             }
 
             document.addEventListener("keydown", keyDownHandler, false)
-            setInterval(tick, 20)
+            setInterval(tick, tickInterval)
         </script>
     </body>
 </html>
