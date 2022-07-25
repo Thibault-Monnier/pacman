@@ -28,13 +28,15 @@
             const ctx = canvas.getContext("2d")
             const tickInterval = 19
             const cellSize = 30
+            const pacmanSize = cellSize / 2 - 2
             const mouthNbTicks = 5
 
             let mouthOpen = false
+            let mouthCounter = 0
             let isMoving = false
-            let pacmanSize = cellSize / 2 - 2
             let pacmanDirection = "right"
-            let pacmanSpeed = cellSize / 10
+            // Keep pacmanSpeed a divisor of cellSize for Pacman to move through the center of each cell.
+            let pacmanSpeed = cellSize / 10 
             let pacmanX = 400
             let pacmanY = 200
 
@@ -57,8 +59,6 @@
                 [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X],
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
             ]
-
-            let mouthCounter = 0
 
             function tick() {
                 draw()
