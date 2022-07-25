@@ -36,9 +36,10 @@
             let isMoving = false
             let pacmanDirection = "right"
             // Keep pacmanSpeed a divisor of cellSize for Pacman to move through the center of each cell.
+            let pacmanNextDirection = null
             let pacmanSpeed = cellSize / 10 
-            let pacmanX = 400
-            let pacmanY = 200
+            let pacmanX = 45
+            let pacmanY = 45
 
             const X = true
             const _ = false
@@ -64,6 +65,17 @@
                 draw()
 
                 if (isMoving) {
+                    if (pacmanNextDirection) {
+                        movePacman(pacmanNextDirection)
+                        const collision = collisionDetection()
+                        movePacman(pacmanNextDirection, true)
+
+                        if (!collision) {
+                            pacmanDirection = pacmanNextDirection
+                            pacmanNextDirection = null
+                        }
+                    }
+
                     movePacman(pacmanDirection)
                     if (collisionDetection()) {
                         isMoving = false
@@ -141,23 +153,18 @@
             }
 
             function movePacman(direction, reverse = false) {
-                const pacmanCellMiddle = {
-                    x: Math.floor(pacmanX / cellSize) * cellSize + cellSize / 2,
-                    y: Math.floor(pacmanY / cellSize) * cellSize + cellSize / 2,
-                }
-
                 switch (direction) {
                     case "right":
-                        pacmanX = reverse ? pacmanCellMiddle.x : pacmanX + pacmanSpeed
+                        pacmanX = pacmanX + pacmanSpeed * (reverse ? -1 : 1)
                         break
                     case "left":
-                        pacmanX = reverse ? pacmanCellMiddle.x : pacmanX - pacmanSpeed
+                        pacmanX = pacmanX - pacmanSpeed * (reverse ? -1 : 1)
                         break
                     case "up":
-                        pacmanY = reverse ? pacmanCellMiddle.y : pacmanY - pacmanSpeed
+                        pacmanY = pacmanY - pacmanSpeed * (reverse ? -1 : 1)
                         break
                     case "down":
-                        pacmanY = reverse ? pacmanCellMiddle.y : pacmanY + pacmanSpeed
+                        pacmanY = pacmanY + pacmanSpeed * (reverse ? -1 : 1)
                         break
                 }
             }
@@ -182,16 +189,16 @@
 
             function keyDownHandler(event) {
                 if (event.code === "ArrowRight") {
-                    pacmanDirection = "right"
+                    pacmanNextDirection = "right"
                     isMoving = true
                 } else if (event.code === "ArrowLeft") {
-                    pacmanDirection = "left"
+                    pacmanNextDirection = "left"
                     isMoving = true
                 } else if (event.code === "ArrowUp") {
-                    pacmanDirection = "up"
+                    pacmanNextDirection = "up"
                     isMoving = true
                 } else if (event.code === "ArrowDown") {
-                    pacmanDirection = "down"
+                    pacmanNextDirection = "down"
                     isMoving = true
                 }
             }
