@@ -100,6 +100,7 @@
 
                 drawBoard()
                 drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, pacmanSize)
+                drawText({},"Pause")
             }
 
             function drawBoard() {
@@ -120,6 +121,23 @@
                     y += cellSize
                     x = 0
                 }
+            }
+
+            function drawText({color, size, style}, ...lines) {
+                const fontSize = size || 60
+                const interline = fontSize * 1.1
+
+                ctx.font = `${style || "bold"} ${fontSize}px sans-serif`
+                ctx.fillStyle = color || "rgb(255, 0, 0)"
+                ctx.textAlign = "center"
+                ctx.textBaseline = "middle"
+
+                let y = 450 / 2 + ((lines.length - 1) / 2) * interline
+
+                for (const line of lines) {
+                ctx.fillText(line, canvas.width / 2, y, 600 - 15)
+                y += interline
+             }
             }
 
             function drawPacman(x, y, direction, mouth, size) {
