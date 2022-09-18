@@ -48,8 +48,12 @@
       let pacmanX = 45
       let pacmanY = 45
 
-      const X = true
-      const _ = false
+      const CellEmpty = "E"
+      const CellFood = "F"
+      const CellWall = "W"
+
+      const _ = CellFood
+      const X = CellWall
       // prettier-ignore
       const board = [
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
@@ -116,12 +120,14 @@
 
         for (const row of board) {
           for (const cell of row) {
-            if (cell) {
-              ctx.beginPath()
-              ctx.rect(x, y, cellSize, cellSize)
+            if (cell === CellWall) {
               ctx.fillStyle = "#7f96fa"
+              ctx.fillRect(x, y, cellSize, cellSize)
+            } else if (cell === CellFood) {
+              ctx.beginPath()
+              ctx.fillStyle = "yellow"
+              ctx.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 8, 0, 2 * Math.PI)
               ctx.fill()
-              ctx.closePath()
             }
             x += cellSize
           }
@@ -207,10 +213,10 @@
         return (
           (isCenteredX || isCenteredY
             ? false
-            : board[testCell.row][testCell.col]) ||
-          (isCenteredX ? false : board[testCell.row - 1][testCell.col]) ||
-          (isCenteredY ? false : board[testCell.row][testCell.col - 1]) ||
-          board[testCell.row - 1][testCell.col - 1]
+            : board[testCell.row][testCell.col] === CellWall) ||
+          (isCenteredX ? false : board[testCell.row - 1][testCell.col] === CellWall) ||
+          (isCenteredY ? false : board[testCell.row][testCell.col - 1] === CellWall) ||
+          board[testCell.row - 1][testCell.col - 1] === CellWall
         )
       }
 
