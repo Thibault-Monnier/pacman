@@ -1,49 +1,57 @@
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Insane Pacman 😱</title>
-        <style>
-            * {
-                padding: 0;
-                margin: 0;
-            }
+  <head>
+    <meta charset="utf-8" />
+    <title>Insane Pacman 😱</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
 
-            body {
-                background-color: #2f2f2f;
-            }
+      body {
+        background-color: #2f2f2f;
+      }
 
-            canvas {
-                background: black;
-            }
-        </style>
-    </head>
+      canvas {
+        background: black;
+      }
+    </style>
+  </head>
 
-    <body>
-        <div style="height: 100vh; display: flex; align-items: center; justify-content: center">
-            <canvas id="myCanvas" width="1200" height="450"></canvas>
-        </div>
+  <body>
+    <div
+      style="
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <canvas id="myCanvas" width="1200" height="450"></canvas>
+    </div>
 
-        <script>
-            const canvas = document.getElementById("myCanvas")
-            const ctx = canvas.getContext("2d")
-            const tickInterval = 19
-            const cellSize = 30
-            const pacmanSize = cellSize / 2 - 2
-            const mouthNbTicks = 5
+    <script>
+      const canvas = document.getElementById("myCanvas")
+      const ctx = canvas.getContext("2d")
+      const tickInterval = 19
+      const cellSize = 30
+      const pacmanSize = cellSize / 2 - 2
+      const mouthNbTicks = 5
 
-            let mouthOpen = false
-            let mouthCounter = 0
-            let isMoving = false
-            let pacmanDirection = "right"
-            let pacmanNextDirection = null
-            // pacmanSpeed should be an integer or a .5 number. Examples: 1, 1.5, 2...
-            let pacmanSpeed = cellSize / 12
-            let pacmanX = 45
-            let pacmanY = 45 
+      let mouthOpen = false
+      let mouthCounter = 0
+      let isMoving = false
+      let pacmanDirection = "right"
+      let pacmanNextDirection = null
+      // pacmanSpeed should be an integer or a .5 number. Examples: 1, 1.5, 2...
+      let pacmanSpeed = cellSize / 12
+      let pacmanX = 45
+      let pacmanY = 45
 
-            const X = true
-            const _ = false
-            const board = [
+      const X = true
+      const _ = false
+      // prettier-ignore
+      const board = [
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
                 [X, _, X, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, X, _, _, _, X, X, _, X, X, X, X, _, _, _, _, _, _, _, _, _, X],
                 [X, _, _, _, X, _, X, X, _, X, X, X, _, X, _, X, X, X, _, X, _, X, _, _, _, _, _, _, _, _, _, X, X, X, _, X, X, X, _, X],
@@ -61,167 +69,169 @@
                 [X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X, X],
             ]
 
-            function tick() {
-                draw()
+      function tick() {
+        draw()
 
-                if (isMoving) {
-                    if (pacmanNextDirection) {
-                        movePacman(pacmanNextDirection)
-                        const collision = collisionDetection()
-                        movePacman(pacmanNextDirection, true)
+        if (isMoving) {
+          if (pacmanNextDirection) {
+            movePacman(pacmanNextDirection)
+            const collision = collisionDetection()
+            movePacman(pacmanNextDirection, true)
 
-                        if (!collision) {
-                            pacmanDirection = pacmanNextDirection
-                            pacmanNextDirection = null
-                        }
-                    }
-
-                    movePacman(pacmanDirection)
-                    if (collisionDetection()) {
-                        isMoving = false
-                        movePacman(pacmanDirection, true)
-                    }
-                }
-
-                if (isMoving) {
-                    mouthCounter++
-                    if (mouthCounter === mouthNbTicks) {
-                        mouthOpen = !mouthOpen
-                        mouthCounter = 0
-                    }
-                } else {
-                    mouthCounter = 0
-                    mouthOpen = false
-                }
+            if (!collision) {
+              pacmanDirection = pacmanNextDirection
+              pacmanNextDirection = null
             }
+          }
 
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height)
+          movePacman(pacmanDirection)
+          if (collisionDetection()) {
+            isMoving = false
+            movePacman(pacmanDirection, true)
+          }
+        }
 
-                drawBoard()
-                drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, pacmanSize)
+        if (isMoving) {
+          mouthCounter++
+          if (mouthCounter === mouthNbTicks) {
+            mouthOpen = !mouthOpen
+            mouthCounter = 0
+          }
+        } else {
+          mouthCounter = 0
+          mouthOpen = false
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        drawBoard()
+        drawPacman(pacmanX, pacmanY, pacmanDirection, mouthOpen, pacmanSize)
+      }
+
+      function drawBoard() {
+        let x = 0
+        let y = 0
+
+        for (const row of board) {
+          for (const cell of row) {
+            if (cell) {
+              ctx.beginPath()
+              ctx.rect(x, y, cellSize, cellSize)
+              ctx.fillStyle = "#7f96fa"
+              ctx.fill()
+              ctx.closePath()
             }
+            x += cellSize
+          }
+          y += cellSize
+          x = 0
+        }
+      }
 
-            function drawBoard() {
-                let x = 0
-                let y = 0
+      function drawText({ color, size, style }, ...lines) {
+        const fontSize = size || 60
+        const interline = fontSize * 1.1
 
-                for (const row of board) {
-                    for (const cell of row) {
-                        if (cell) {
-                            ctx.beginPath()
-                            ctx.rect(x, y, cellSize, cellSize)
-                            ctx.fillStyle = "#7f96fa"
-                            ctx.fill()
-                            ctx.closePath()
-                        }
-                        x += cellSize
-                    }
-                    y += cellSize
-                    x = 0
-                }
-            }
+        ctx.font = `${style || "bold"} ${fontSize}px sans-serif`
+        ctx.fillStyle = color || "rgb(255, 0, 0)"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
 
-            function drawText({color, size, style}, ...lines) {
-                const fontSize = size || 60
-                const interline = fontSize * 1.1
+        let y = 450 / 2 + ((lines.length - 1) / 2) * interline
 
-                ctx.font = `${style || "bold"} ${fontSize}px sans-serif`
-                ctx.fillStyle = color || "rgb(255, 0, 0)"
-                ctx.textAlign = "center"
-                ctx.textBaseline = "middle"
+        for (const line of lines) {
+          ctx.fillText(line, canvas.width / 2, y, 600 - 15)
+          y += interline
+        }
+      }
 
-                let y = 450 / 2 + ((lines.length - 1) / 2) * interline
+      function drawPacman(x, y, direction, mouth, size) {
+        const rotateAngle = {
+          right: 0,
+          left: Math.PI,
+          up: -Math.PI / 2,
+          down: Math.PI / 2,
+        }[direction]
 
-                for (const line of lines) {
-                ctx.fillText(line, canvas.width / 2, y, 600 - 15)
-                y += interline
-             }
-            }
+        // Body
+        ctx.beginPath()
+        ctx.fillStyle = "rgb(255,221,0)"
+        const startAngle = (mouth ? 0.25 : 0.1) * Math.PI + rotateAngle
+        ctx.arc(x, y, size, startAngle, startAngle + Math.PI, false)
+        ctx.fill()
+        ctx.beginPath()
+        const startAngle2 = (mouth ? 0.75 : 0.9) * Math.PI + rotateAngle
+        ctx.arc(x, y, size, startAngle2, startAngle2 + Math.PI, false)
+        ctx.fill()
 
-            function drawPacman(x, y, direction, mouth, size) {
-                const rotateAngle = {
-                    right: 0,
-                    left: Math.PI,
-                    up: -Math.PI / 2,
-                    down: Math.PI / 2,
-                }[direction]
+        // Eye
+        ctx.beginPath()
+        if (direction === "right" || direction === "left") {
+          ctx.arc(x, y - size / 2, size / 5, 0, 2 * Math.PI, false)
+        } else {
+          ctx.arc(x - size / 2, y, size / 5, 0, 2 * Math.PI, false)
+        }
+        ctx.fillStyle = "black"
+        ctx.fill()
+      }
 
-                // Body
-                ctx.beginPath()
-                ctx.fillStyle = "rgb(255,221,0)"
-                const startAngle = (mouth ? 0.25 : 0.1) * Math.PI + rotateAngle
-                ctx.arc(x, y, size, startAngle, startAngle + Math.PI, false)
-                ctx.fill()
-                ctx.beginPath()
-                const startAngle2 = (mouth ? 0.75 : 0.9) * Math.PI + rotateAngle
-                ctx.arc(x, y, size, startAngle2, startAngle2 + Math.PI, false)
-                ctx.fill()
+      function movePacman(direction, reverse = false) {
+        switch (direction) {
+          case "right":
+            pacmanX = pacmanX + pacmanSpeed * (reverse ? -1 : 1)
+            break
+          case "left":
+            pacmanX = pacmanX - pacmanSpeed * (reverse ? -1 : 1)
+            break
+          case "up":
+            pacmanY = pacmanY - pacmanSpeed * (reverse ? -1 : 1)
+            break
+          case "down":
+            pacmanY = pacmanY + pacmanSpeed * (reverse ? -1 : 1)
+            break
+        }
+      }
 
-                // Eye
-                ctx.beginPath()
-                if (direction === "right" || direction === "left") {
-                    ctx.arc(x, y - size / 2, size / 5, 0, 2 * Math.PI, false)
-                } else {
-                    ctx.arc(x - size / 2, y, size / 5, 0, 2 * Math.PI, false)
-                }
-                ctx.fillStyle = "black"
-                ctx.fill()
-            }
+      function collisionDetection() {
+        // testCell is at the bottom right of the 4 cells that need to be checked.
+        const testCell = {
+          col: Math.round(pacmanX / cellSize),
+          row: Math.round(pacmanY / cellSize),
+        }
 
-            function movePacman(direction, reverse = false) {
-                switch (direction) {
-                    case "right":
-                        pacmanX = pacmanX + pacmanSpeed * (reverse ? -1 : 1)
-                        break
-                    case "left":
-                        pacmanX = pacmanX - pacmanSpeed * (reverse ? -1 : 1)
-                        break
-                    case "up":
-                        pacmanY = pacmanY - pacmanSpeed * (reverse ? -1 : 1)
-                        break
-                    case "down":
-                        pacmanY = pacmanY + pacmanSpeed * (reverse ? -1 : 1)
-                        break
-                }
-            }
+        const isCenteredX = pacmanX % cellSize === cellSize / 2
+        const isCenteredY = pacmanY % cellSize === cellSize / 2
 
-            function collisionDetection() {
-                // testCell is at the bottom right of the 4 cells that need to be checked.
-                const testCell = {
-                    col: Math.round(pacmanX / cellSize),
-                    row: Math.round(pacmanY / cellSize),
-                }
+        return (
+          (isCenteredX || isCenteredY
+            ? false
+            : board[testCell.row][testCell.col]) ||
+          (isCenteredX ? false : board[testCell.row - 1][testCell.col]) ||
+          (isCenteredY ? false : board[testCell.row][testCell.col - 1]) ||
+          board[testCell.row - 1][testCell.col - 1]
+        )
+      }
 
-                const isCenteredX = pacmanX % cellSize === cellSize / 2
-                const isCenteredY = pacmanY % cellSize === cellSize / 2
+      function keyDownHandler(event) {
+        if (event.code === "ArrowRight") {
+          pacmanNextDirection = "right"
+          isMoving = true
+        } else if (event.code === "ArrowLeft") {
+          pacmanNextDirection = "left"
+          isMoving = true
+        } else if (event.code === "ArrowUp") {
+          pacmanNextDirection = "up"
+          isMoving = true
+        } else if (event.code === "ArrowDown") {
+          pacmanNextDirection = "down"
+          isMoving = true
+        }
+      }
 
-                return (
-                    (isCenteredX || isCenteredY ? false : board[testCell.row][testCell.col]) ||
-                    (isCenteredX ? false : board[testCell.row - 1][testCell.col]) ||
-                    (isCenteredY ? false : board[testCell.row][testCell.col - 1]) ||
-                    board[testCell.row - 1][testCell.col - 1]
-                )
-            }
-
-            function keyDownHandler(event) {
-                if (event.code === "ArrowRight") {
-                    pacmanNextDirection = "right"
-                    isMoving = true
-                } else if (event.code === "ArrowLeft") {
-                    pacmanNextDirection = "left"
-                    isMoving = true
-                } else if (event.code === "ArrowUp") {
-                    pacmanNextDirection = "up"
-                    isMoving = true
-                } else if (event.code === "ArrowDown") {
-                    pacmanNextDirection = "down"
-                    isMoving = true
-                }
-            }
-
-            document.addEventListener("keydown", keyDownHandler, false)
-            setInterval(tick, tickInterval)
-        </script>
-    </body>
+      document.addEventListener("keydown", keyDownHandler, false)
+      setInterval(tick, tickInterval)
+    </script>
+  </body>
 </html>
